@@ -1,0 +1,63 @@
+<html>
+<head>
+	<link rel=stylesheet href="style.css" type="text/css">
+	<!-- BEGIN Pre-requisites -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+	<!-- END Pre-requisites -->
+	<!-- https://developers.google.com/identity/sign-in/web/server-side-flow -->
+	<!-- https://developers.google.com/identity/sign-in/web/sign-in -->
+
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '547706737793-u0gdm2gdf58stgfp26m8uqbarqv9ers9.apps.googleusercontent.com',
+          // Scopes to request in addition to 'profile' and 'email'
+          //{valid=[https://www.googleapis.com/auth/plus.me, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email],
+          //['https://www.googleapis.com/auth/contacts.readonly'] or 'https://www.googleapis.com/auth/plus.me'
+          scope: 'https://www.googleapis.com/auth/userinfo.profile'
+        });
+      });
+    }
+  </script>
+</head>
+<body>
+	<h2>Google profile contact List!!!!</h2>
+	<button id="signinButton">Fetch Count</button>
+	<div id="target">
+	</div>
+	 
+<script>
+  $('#signinButton').click(function() {
+    // signInCallback defined in step 6.
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+
+	function signInCallback(authResult) {
+	  if (authResult['code']) {
+		console.log("authResult['code']::: "+authResult['code']);
+	    // Hide the sign-in button now that the user is authorized, for example:
+	    $('#signinButton').attr('style', 'display: none');
+	    var body = {
+	            code: authResult['code']
+	        }
+	    // Send the code to the server
+	      $.ajax({
+	          url: 'http://localhost:8080/GOAuth/message',
+	          type: 'post',
+	          data: JSON.stringify(body),
+	          contentType: "application/json; charset=utf-8",
+	          traditional: true,
+	          success: function (data) {
+	        	  //alert(data);
+	        	  $('#target').html(data);
+	          }
+	      });
+	  } else {
+	    // There was an error.
+	  }
+	}
+</script>
+</body>
+</html>
